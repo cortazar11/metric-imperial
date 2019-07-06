@@ -21,6 +21,7 @@ const operator=(param)=>{
     const re=/(\d)/g
     const arr=input.split(re)
     const type=arr.splice(arr.length-1).toString()
+    let returnNum=0;
     let num=eval(arr.join(''))
    
     switch(type){
@@ -110,9 +111,14 @@ const operator=(param)=>{
 
 
 // User story 5
-app.post('api/convert',(req,res)=>{
-    console.log('req: '+req)
-    res.end()
+app.post('/api/convert',(req,res)=>{
+    const input=req.body.input;
+    if(input){
+        const result=operator(input)
+        
+        res.send(result)
+    }
+    
 })
 
 app.get('/api/convert', (req,res)=>{
@@ -128,8 +134,8 @@ app.get('/api/convert', (req,res)=>{
 
 
 
+const PORT = process.env.PORT || 5000;
 
-
-app.listen(5000,()=>{
+app.listen(PORT,()=>{
     console.log('Server running')
 })

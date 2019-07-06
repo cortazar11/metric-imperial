@@ -4,28 +4,58 @@ import axios from 'axios';
 class App extends React.Component{
 
     state={
-        input: ''
+        input: '',
+        object: {
+            initNum: 0,
+            initUnit: '',
+            returnNum:0,
+            returnUnit: '',
+            string: ''
+        },
+        isSubmitted: false
     }
 
     onChange=(e)=>{
         e.preventDefault()
         const value=e.target.value;
         this.setState({
-            input: value
+            input: value,
+            
         })
     }
 
     onSubmit=(e)=>{
         e.preventDefault()
-        console.log('submit: '+this.state.input)
         axios.post("/api/convert",{input:this.state.input})
             .then((res)=>{
-                console.log('axios result: '+res)
-            }).catch(console.error)
-    }
+                console.log('axios result: '+JSON.stringify(res.data))
+                this.setState(prevState=>({
+                    object: {
+                        ...prevState.object,
+                        initNum: res.data.initNum,
+                        initUnit: res.data.initUnit,
+                        returnNum:res.data.returnNum,
+                        returnUnit: res.data.returnUnit,
+                        string: res.data.string
+                    },
+                    isSubmitted: true,
+                    input:''
+                })
+            )
+    })
+
+
+}  
     
+    renderObj=()=>{
+        if(this.state.isSubmitted){
+            return JSON.stringify(this.state.object)
+        }
+        
+    }
 
     render(){
+        
         return (
             <div>
                 <h2>ISQA_2 - Metric/Imp Converter</h2>
@@ -57,7 +87,8 @@ class App extends React.Component{
                         <input type="text" name="input" onChange={this.onChange} value={this.state.input} />
                         <button type="submit">Convert!</button>
                     </form>
-                    <div id="result"></div>
+                    <div></div>
+                    <div>{this.renderObj()}</div>
             </div>
                     
         )
